@@ -3,9 +3,12 @@ const app = express();
 const cors = require('cors');
 const port = 5000 || process.env.PORT;
 
+const userRouter = require('./routes/userRouter');
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+app.use('/users', userRouter);
 
 // Routes
 app.get('/', (req, res) => {
