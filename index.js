@@ -31,6 +31,10 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+        const database = client.db('hungry_bunny');
+        const usersCollection = database.collection('users');
+
+
 
         app.post('/set-token', (req, res) => {
             const user = req.body;
@@ -38,7 +42,12 @@ async function run() {
             const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
             res.send({ token });
         });
+        
+        
+        
+        app.post('/user-info', async (req, res) => {
 
+        });
 
 
         // Send a ping to confirm a successful connection
