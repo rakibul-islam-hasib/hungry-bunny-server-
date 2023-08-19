@@ -42,11 +42,13 @@ async function run() {
             const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
             res.send({ token });
         });
-        
-        
-        
-        app.post('/user-info', async (req, res) => {
 
+
+
+        app.post('/user-info', async (req, res) => {
+            const data = req.body;
+            const result = await usersCollection.insertOne(data);
+            res.send(result);
         });
 
 
