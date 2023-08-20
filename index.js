@@ -13,6 +13,20 @@ app.use(express.json());
 app.use('/users', userRouter);
 
 // Routes
+const verifyJWT = (req, res, next) => {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).send({ error: true, message: 'Unauthorize access' })
+    }
+    const token = authorization?.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ error: true, message: 'forbidden user or token has expired' })
+        }
+        req.decoded = decoded;
+        next()
+    })
+}
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -33,6 +47,7 @@ async function run() {
         await client.connect();
         const database = client.db('hungry_bunny');
         const usersCollection = database.collection('users');
+        const communityPostCollection = database.collection('community_post');
 
 
 
@@ -50,6 +65,38 @@ async function run() {
             const result = await usersCollection.insertOne(data);
             res.send(result);
         });
+
+
+        app.get('/user-info/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const result = await usersCollection.findOne({ email: email });
+            res.send(result);
+        });
+
+        // Community Post Routes here
+
+        app.get('/community-post', async (req, res) => {
+            const result = await communityPostCollection.find({}).toArray();
+            res.send(result);
+        });
+        
+        // Update likes
+        app.put('/community-post/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await communityPostCollection.updateOne({ _id: id }, { $inc: { likes: 1 } });
+            res.send(result);
+        });
+
+
+
+
+
+
+
+
+
+
+
 
 
         // Send a ping to confirm a successful connection
