@@ -29,7 +29,7 @@ const verifyJWT = (req, res, next) => {
 }
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rgfriso.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -79,11 +79,11 @@ async function run() {
             const result = await communityPostCollection.find({}).toArray();
             res.send(result);
         });
-        
+
         // Update likes
-        app.put('/community-post/:id', async (req, res) => {
+        app.put('/community-post/like/:id', async (req, res) => {
             const id = req.params.id;
-            const result = await communityPostCollection.updateOne({ _id: id }, { $inc: { likes: 1 } });
+            const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: 1 } });
             res.send(result);
         });
 
