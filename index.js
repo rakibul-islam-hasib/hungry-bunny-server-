@@ -76,18 +76,26 @@ async function run() {
         // Community Post Routes here
 
         app.get('/community-post', async (req, res) => {
-            const result = await communityPostCollection.find({}).toArray();
+            const result = await communityPostCollection.find({}).sort({ posted: -1 }).toArray();
             res.send(result);
         });
-
+        // Create a new post
+        app.post('/community-post', async (req, res) => {
+            const data = req.body;
+            const result = await communityPostCollection.insertOne(data);
+            res.send(result);
+        });
+        app.delete('/community-post/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const result = await communityPostCollection.deleteOne({ _id: new ObjectId(id) });
+            res.send(result);
+        });
         // Update likes
         app.put('/community-post/like/:id/:userID', async (req, res) => {
             const id = req.params.id;
             const userID = req.params.userID;
             const user = await usersCollection.findOne({ _id: new ObjectId(userID) });
             if (user.likedPost.includes(id)) {
-                // user already liked the post, remove like
-                // const r1Options = 
                 const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: -1 }, $pull: { likedBy: userID } });
                 const result2 = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $pull: { likedPost: id } });
                 res.send({ result, result2 });
