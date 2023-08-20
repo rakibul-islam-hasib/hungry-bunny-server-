@@ -87,12 +87,13 @@ async function run() {
             const user = await usersCollection.findOne({ _id: new ObjectId(userID) });
             if (user.likedPost.includes(id)) {
                 // user already liked the post, remove like
-                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: -1 } });
+                // const r1Options = 
+                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: -1 }, $pull: { likedBy: userID } });
                 const result2 = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $pull: { likedPost: id } });
                 res.send({ result, result2 });
             } else {
                 // user hasn't liked the post, add like
-                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: 1 } });
+                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: 1 }, $push: { likedBy: userID } });
                 const result2 = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $push: { likedPost: id } });
                 res.send({ result, result2 });
             }
