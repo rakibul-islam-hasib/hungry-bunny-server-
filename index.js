@@ -85,13 +85,39 @@ async function run() {
             const result = await usersCollection.findOne({ email: email });
             res.send(result);
         });
-
+        app.get('/user-info/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const result = await usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
+            res.send(result.post);
+        });
         // Community Post Routes here
 
         app.get('/community-post', async (req, res) => {
-            const result = await communityPostCollection.find({}).toArray();
+            const result = await communityPostCollection.find({}).sort({ posted: -1 }).toArray();
             res.send(result);
         });
+        // Create a new post
+        app.post('/community-post/', async (req, res) => {
+            const data = req.body;
+            // Add post 
+            const result = await communityPostCollection.insertOne(data);
+            res.send(result);
+        });
+        app.delete('/community-post/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const result = await communityPostCollection.deleteOne({ _id: new ObjectId(id) });
+            res.send(result);
+        });
+        // update user info with post data . 
+        app.put('/community-post/:userID', verifyJWT, async (req, res) => {
+            const userID = req.params.userID;
+            const data = req.body;
+            console.log(data, userID)
+            const result = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $push: { posts: data.postId } });
+            res.send(result);
+        });
+
+
 
         // Update likes
         app.put('/community-post/like/:id/:userID', async (req, res) => {
@@ -99,13 +125,12 @@ async function run() {
             const userID = req.params.userID;
             const user = await usersCollection.findOne({ _id: new ObjectId(userID) });
             if (user.likedPost.includes(id)) {
-                // user already liked the post, remove like
-                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: -1 } });
+                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: -1 }, $pull: { likedBy: userID } });
                 const result2 = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $pull: { likedPost: id } });
                 res.send({ result, result2 });
             } else {
                 // user hasn't liked the post, add like
-                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: 1 } });
+                const result = await communityPostCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { likes: 1 }, $push: { likedBy: userID } });
                 const result2 = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $push: { likedPost: id } });
                 res.send({ result, result2 });
             }
