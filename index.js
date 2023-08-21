@@ -48,6 +48,7 @@ async function run() {
         const database = client.db('hungry_bunny');
         const usersCollection = database.collection('users');
         const communityPostCollection = database.collection('community_post');
+        const restaurantCollection = database.collection('restaurant');
 
 
 
