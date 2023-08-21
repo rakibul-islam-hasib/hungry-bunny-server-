@@ -84,7 +84,7 @@ async function run() {
             res.send(result);
         });
         // Create a new post
-        app.post('/community-post/', async (req, res) => {
+        app.post('/community-post/', verifyJWT, async (req, res) => {
             const data = req.body;
             // Add post 
             const result = await communityPostCollection.insertOne(data);
@@ -99,7 +99,6 @@ async function run() {
         app.put('/community-post/:userID', verifyJWT, async (req, res) => {
             const userID = req.params.userID;
             const data = req.body;
-            console.log(data, userID)
             const result = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $push: { posts: data.postId } });
             res.send(result);
         });
