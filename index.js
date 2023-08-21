@@ -72,7 +72,11 @@ async function run() {
             const result = await usersCollection.findOne({ email: email });
             res.send(result);
         });
-
+        app.get('/user-info/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const result = await usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
+            res.send(result.post);
+        });
         // Community Post Routes here
 
         app.get('/community-post', async (req, res) => {
@@ -80,8 +84,9 @@ async function run() {
             res.send(result);
         });
         // Create a new post
-        app.post('/community-post', async (req, res) => {
+        app.post('/community-post/', async (req, res) => {
             const data = req.body;
+            // Add post 
             const result = await communityPostCollection.insertOne(data);
             res.send(result);
         });
@@ -90,6 +95,17 @@ async function run() {
             const result = await communityPostCollection.deleteOne({ _id: new ObjectId(id) });
             res.send(result);
         });
+        // update user info with post data . 
+        app.put('/community-post/:userID', verifyJWT, async (req, res) => {
+            const userID = req.params.userID;
+            const data = req.body;
+            console.log(data, userID)
+            const result = await usersCollection.updateOne({ _id: new ObjectId(userID) }, { $push: { posts: data.postId } });
+            res.send(result);
+        });
+
+
+
         // Update likes
         app.put('/community-post/like/:id/:userID', async (req, res) => {
             const id = req.params.id;
