@@ -50,19 +50,6 @@ async function run() {
         const communityPostCollection = database.collection('community_post');
         const restaurantCollection = database.collection('restaurant');
 
-        app.get('/restaurant', async(req, res) =>{
-            const cursor = restaurantCollection.find()
-            const result = await cursor.toArray()
-            res.send(result)
-        })
-
-        app.get('/restaurant/:id', async(req, res)=>{
-            const id = req.params.id;
-            // console.log(id);
-            const query = {_id: new ObjectId(id)}
-            const result = await restaurantCollection.findOne(query);
-            res.send(result)
-          })
 
         app.post('/set-token', (req, res) => {
             const user = req.body;
@@ -138,12 +125,20 @@ async function run() {
 
 
 
+// Restaurant Related apis
+        app.get('/restaurant', async(req, res) =>{
+            const cursor = restaurantCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
-
-
-
-
-
+        app.get('/restaurant/:id', async(req, res)=>{
+            const id = req.params.id;
+            // console.log(id);
+            const query = {_id: new ObjectId(id)}
+            const result = await restaurantCollection.findOne(query);
+            res.send(result)
+          })
 
 
         // Send a ping to confirm a successful connection
