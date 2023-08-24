@@ -120,6 +120,7 @@ async function run() {
         app.put('/community-post/comment/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const data = req.body;
+            data._id = new ObjectId();
             const filter = {
                 _id: new ObjectId(id),
             }
