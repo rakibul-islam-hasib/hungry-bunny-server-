@@ -132,6 +132,15 @@ async function run() {
             res.send(result);
         });
 
+        // Get only comment via post id
+        app.get('/community-post/comment/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const project = { projection: { comments: 1, _id: 0 } };
+            const result = await communityPostCollection.findOne(filter, project);
+            res.send(result.comments);
+        });
+
         // Update likes
         app.put('/community-post/like/:id/:userID', async (req, res) => {
             const id = req.params.id;
