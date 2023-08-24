@@ -50,19 +50,19 @@ async function run() {
         const communityPostCollection = database.collection('community_post');
         const restaurantCollection = database.collection('restaurant');
 
-        app.get('/restaurant', async(req, res) =>{
+        app.get('/restaurant', async (req, res) => {
             const cursor = restaurantCollection.find()
             const result = await cursor.toArray()
             res.send(result)
         })
 
-        app.get('/restaurant/:id', async(req, res)=>{
+        app.get('/restaurant/:id', async (req, res) => {
             const id = req.params.id;
             // console.log(id);
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await restaurantCollection.findOne(query);
             res.send(result)
-          })
+        })
 
         app.post('/set-token', (req, res) => {
             const user = req.body;
@@ -116,6 +116,45 @@ async function run() {
             res.send(result);
         });
 
+        // Add comment to post
+        app.put('/community-post/comment/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+            data._id = new ObjectId();
+            const filter = {
+                _id: new ObjectId(id),
+            }
+            const update = {
+                $push: {
+                    comments: data
+                }
+            }
+            const result = await communityPostCollection.updateOne(filter, update);
+            res.send(result);
+        });
+
+        // Get only comment via post id
+        app.get('/community-post/comment/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const project = { projection: { comments: 1, _id: 0 } };
+            const result = await communityPostCollection.findOne(filter, project);
+            res.send(result.comments);
+        });
+
+        // Delete comment via post id and comment id
+        app.delete('/community-post/comment/:id/:commentID', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const commentID = req.params.commentID;
+            const filter = { _id: new ObjectId(id) };
+            const update = {
+                $pull: {
+                    comments: { _id: new ObjectId(commentID) }
+                }
+            }
+            const result = await communityPostCollection.updateOne(filter, update);
+            res.send(result);
+        });
 
 
         // Update likes
