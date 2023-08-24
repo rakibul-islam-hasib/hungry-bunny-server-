@@ -141,6 +141,21 @@ async function run() {
             res.send(result.comments);
         });
 
+        // Delete comment via post id and comment id
+        app.delete('/community-post/comment/:id/:commentID', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const commentID = req.params.commentID;
+            const filter = { _id: new ObjectId(id) };
+            const update = {
+                $pull: {
+                    comments: { _id: new ObjectId(commentID) }
+                }
+            }
+            const result = await communityPostCollection.updateOne(filter, update);
+            res.send(result);
+        });
+
+
         // Update likes
         app.put('/community-post/like/:id/:userID', async (req, res) => {
             const id = req.params.id;
