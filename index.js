@@ -8,8 +8,9 @@ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const userRouter = require('./routes/userRouter');
-const communityRouter = require('./routes/communityRouter'); 
-const verifyJWT = require('./middleware/verifyJWT');
+const communityRouter = require('./routes/communityRouter');
+const restaurantRouter = require('./routes/restaurantRouter');
+
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -21,9 +22,9 @@ app.use(express.json());
 const server = http.createServer(app);
 
 // Routes
-app.use('/users', userRouter);
+app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
-
+app.use('/restaurant', restaurantRouter)
 
 const uri = process.env.MONGODB_URI;
 
@@ -66,56 +67,12 @@ async function run() {
                 console.log('A user disconnected');
             });
         });
-
-
-
-
-        app.get('/restaurant', async (req, res) => {
-            const cursor = restaurantCollection.find()
-            const result = await cursor.toArray()
-            res.send(result)
-        })
-
-        app.get('/restaurant/:id', async (req, res) => {
-            const id = req.params.id;
-            // console.log(id);
-            const query = { _id: new ObjectId(id) }
-            const result = await restaurantCollection.findOne(query);
-            res.send(result)
-        })
-
         app.post('/set-token', (req, res) => {
             const user = req.body;
             // console.log(user)
             const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
             res.send({ token });
         });
-
-
-
-        app.post('/user-info', async (req, res) => {
-            const data = req.body;
-            const result = await usersCollection.insertOne(data);
-            res.send(result);
-        });
-
-
-        app.get('/user-info/:email', verifyJWT, async (req, res) => {
-            const email = req.params.email;
-            const result = await usersCollection.findOne({ email: email });
-            res.send(result);
-        });
-        app.get('/user-info/:email', verifyJWT, async (req, res) => {
-            const email = req.params.email;
-            const result = await usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
-            res.send(result.post);
-        });
-        // Community Post Routes here
-
-
-        // Create a new post
-      
-
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
