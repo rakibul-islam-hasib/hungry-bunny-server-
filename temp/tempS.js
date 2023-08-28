@@ -16,10 +16,15 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-
+        const database = client.db('hungry_bunny');
+        const blogsCollection = database.collection('blogs');
         // ----------------- This is playground -----------------
 
-
+        router.get('/', async (req, res) => {
+            const cursor = blogsCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        });
 
 
 
