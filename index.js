@@ -49,7 +49,14 @@ async function run() {
         const usersCollection = database.collection('users');
         const communityPostCollection = database.collection('community_post');
         const restaurantCollection = database.collection('restaurant');
+        const blogsCollection = database.collection('blogs');
 
+        // blogs related apis
+        app.get('/blogs', async(req, res) =>{
+            const cursor = blogsCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
         app.post('/set-token', (req, res) => {
             const user = req.body;
