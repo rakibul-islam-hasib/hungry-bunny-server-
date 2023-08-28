@@ -7,6 +7,8 @@ const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
+const userRouter = require('./routes/userRouter');
+const communityRouter = require('./routes/communityRouter')
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -17,10 +19,10 @@ app.use(express.json());
 
 const server = http.createServer(app);
 
-const userRouter = require('./routes/userRouter');
 
 
 app.use('/users', userRouter);
+app.use('/community-post', communityRouter)
 
 // Routes
 const verifyJWT = (req, res, next) => {
@@ -40,7 +42,7 @@ const verifyJWT = (req, res, next) => {
 
 
 // const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rgfriso.mongodb.net/?retryWrites=true&w=majority`;
+const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -127,10 +129,7 @@ async function run() {
         });
         // Community Post Routes here
 
-        app.get('/community-post', async (req, res) => {
-            const result = await communityPostCollection.find({}).sort({ posted: -1 }).toArray();
-            res.send(result);
-        });
+
         // Create a new post
         app.post('/community-post/', verifyJWT, async (req, res) => {
             const data = req.body;
