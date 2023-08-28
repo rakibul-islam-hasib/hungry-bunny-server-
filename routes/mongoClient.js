@@ -28,11 +28,13 @@ async function mongoMiddleware(req, res, next) {
   const database = client.db('hungry_bunny');
   const communityPostCollection = database.collection('community_post');
   const usersCollection = database.collection('users');
+  const restaurantCollection = database.collection('restaurant');
   req.mongo = {
     client,
     database,
     communityPostCollection,
     usersCollection,
+    restaurantCollection
   };
   next();
 }

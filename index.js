@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 const userRouter = require('./routes/userRouter');
 const communityRouter = require('./routes/communityRouter');
 const restaurantRouter = require('./routes/restaurantRouter');
-
+const mongoMiddleware = require('./routes/mongoClient');
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -18,7 +18,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
-
+app.use(mongoMiddleware);   // Connect to MongoDB
 const server = http.createServer(app);
 
 // Routes
