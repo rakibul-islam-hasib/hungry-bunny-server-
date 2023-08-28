@@ -20,9 +20,4 @@ router.get('/:email', verifyJWT, async (req, res) => {
     const result = await req.mongo.usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
     res.send(result.post);
 });
-
-
-
-
-
 module.exports = router;
