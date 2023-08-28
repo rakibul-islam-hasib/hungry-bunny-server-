@@ -73,11 +73,24 @@ async function run() {
 
 
 
+
+
+    
+
         app.post('/user-info', async (req, res) => {
             const data = req.body;
             const result = await usersCollection.insertOne(data);
             res.send(result);
         });
+
+        app.get('/user-data', async (req, res)=>{
+            const result=await usersCollection.find().toArray()
+            res.send(result)
+        })
+
+
+
+
 
 
         app.get('/user-info/:email', verifyJWT, async (req, res) => {
