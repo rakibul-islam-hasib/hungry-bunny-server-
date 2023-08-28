@@ -27,10 +27,12 @@ async function mongoMiddleware(req, res, next) {
   const client = await connect();
   const database = client.db('hungry_bunny');
   const communityPostCollection = database.collection('community_post');
+  const usersCollection = database.collection('users');
   req.mongo = {
     client,
     database,
     communityPostCollection,
+    usersCollection,
   };
   next();
 }
