@@ -10,6 +10,7 @@ const userRouter = require('./routes/userRouter');
 const communityRouter = require('./routes/communityRouter');
 const restaurantRouter = require('./routes/restaurantRouter');
 const mongoMiddleware = require('./routes/mongoClient');
+const blogsRouter = require('./routes/blogsRouter');
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -24,17 +25,8 @@ const server = http.createServer(app);
 app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
 app.use('/restaurant', restaurantRouter)
+app.use('/blogs', blogsRouter)
 
-// const uri = process.env.MONGODB_URI;
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-// const client = new MongoClient(uri, {
-//     serverApi: {
-//         version: ServerApiVersion.v1,
-//         strict: true,
-//         deprecationErrors: true,
-//     }
-// });
 const io = socketIo(server, {
     cors: {
         origin: '*', // allow to server to accept request from different origin
@@ -53,7 +45,6 @@ io.on('connection', (socket) => {
 });
 app.post('/set-token', (req, res) => {
     const user = req.body;
-    // console.log(user)
     const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
     res.send({ token });
 });
