@@ -8,7 +8,8 @@ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const userRouter = require('./routes/userRouter');
-const communityRouter = require('./routes/communityRouter')
+const communityRouter = require('./routes/communityRouter'); 
+const verifyJWT = require('./middleware/verifyJWT');
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -19,29 +20,11 @@ app.use(express.json());
 
 const server = http.createServer(app);
 
-
-
+// Routes
 app.use('/users', userRouter);
 app.use('/community-post', communityRouter)
 
-// Routes
-const verifyJWT = (req, res, next) => {
-    const authorization = req.headers.authorization;
-    if (!authorization) {
-        return res.status(401).send({ error: true, message: 'Unauthorize access' })
-    }
-    const token = authorization?.split(' ')[1]
-    jwt.verify(token, process.env.ACCESS_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(403).send({ error: true, message: 'forbidden user or token has expired' })
-        }
-        req.decoded = decoded;
-        next()
-    })
-}
 
-
-// const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
