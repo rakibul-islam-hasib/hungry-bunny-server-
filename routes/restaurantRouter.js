@@ -37,6 +37,22 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/search', async(req, res) =>{
+    const searchQuery = req.query.query;
+    try{
+        const query = {
+            $or: [
+                { restaurantName: {$regex: searchQuery, $options: 'i' } },
+                { place: {$regex: searchQuery, $options: 'i' }}
+            ]
+        };
+        const result = await req.mongo.restaurantCollection.find(query).toArray()
+        res.send(result)
+    } catch (err) {
+        res.status(400).send({ error: 'Invalid ID' });
+    }
+})
+
 router.get('/total/count', async (req, res) => {
     try {
         const total = await req.mongo.restaurantCollection.estimatedDocumentCount();
