@@ -13,7 +13,7 @@ const mongoMiddleware = require('./routes/mongoClient');
 const blogsRouter = require('./routes/blogsRouter');
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with the correct origin
+    origin: '*', // Replace with the correct origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 }));
