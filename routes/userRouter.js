@@ -12,10 +12,11 @@ router.post('/', async (req, res) => {
 
 router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
-    const result = await req.mongo.usersCollection.findOne({ email: email });
+    const regex = new RegExp(email, 'i'); // i for case insensitive
+    const result = await req.mongo.usersCollection.findOne({ email: regex });
     res.send(result);
 });
-router.get('/:email', verifyJWT, async (req, res) => {
+router.get('/post/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
     const result = await req.mongo.usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
     res.send(result.post);
