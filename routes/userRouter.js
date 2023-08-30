@@ -15,9 +15,6 @@ router.get('/', async (req, res) =>{
     res.send(result)
 })
 
-
-
-
 router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
     const regex = new RegExp(email, 'i'); // i for case insensitive
