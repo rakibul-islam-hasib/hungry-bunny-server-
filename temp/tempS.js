@@ -34,6 +34,16 @@ async function run() {
 
         // ----------------- This is playground -----------------
 
+        router.get('/', async (req, res) => {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 3;
+            const skip = (page - 1) * limit;
+
+            const cursor = restaurantCollection.find().limit(limit).skip(skip);
+            const total = await restaurantCollection.estimatedDocumentCount();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
 
 
 
