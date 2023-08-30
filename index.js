@@ -26,7 +26,7 @@ app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
 app.use('/restaurant', restaurantRouter)
 app.use('/blogs', blogsRouter)
-app.use('/faq', faqRouter)
+// app.use('/faq', faqRouter)
 
 const io = socketIo(server, {
     cors: {
