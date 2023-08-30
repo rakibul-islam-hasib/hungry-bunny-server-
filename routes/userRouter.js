@@ -9,6 +9,14 @@ router.post('/', async (req, res) => {
     res.send(result);
 });
 
+router.get('/', async (req, res) =>{
+    const users= req.mongo.usersCollection.find()
+    const result = await users.toArray()
+    res.send(result)
+})
+
+
+
 
 router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
