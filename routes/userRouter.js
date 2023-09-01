@@ -9,37 +9,25 @@ router.post('/', async (req, res) => {
     res.send(result);
 });
 
+
 router.get('/', async (req, res) =>{
     const users= req.mongo.usersCollection.find()
     const result = await users.toArray()
     res.send(result)
 })
 
+
+
+
+
+
+
 router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
-    const regex = new RegExp(email, 'i'); // i for case insensitive
-    const result = await req.mongo.usersCollection.findOne({ email: regex });
+    const result = await req.mongo.usersCollection.findOne({ email: email });
     res.send(result);
 });
-
-// Update user.photo
-router.put('/photo/:email', verifyJWT, async (req, res) => {
-    const email = req.params.email;
-    const photo = req.body.photo;
-    const options = { upsert: true };
-    const regex = new RegExp(email, 'i'); // i for case insensitive
-    const filter = { email: regex };
-    const updatedDocx = {
-        $set: {
-            photo: photo
-        },
-    }
-    const result = await req.mongo.usersCollection.updateOne(filter, updatedDocx, options);
-    res.send(result);
-});
-
-
-router.get('/post/:email', verifyJWT, async (req, res) => {
+router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
     const result = await req.mongo.usersCollection.findOne({ email: email }, { projection: { post: 1, _id: 0 } });
     res.send(result.post);

@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const mongoMiddleware = require('./mongoClient');
 const verifyJWT = require('../middleware/verifyJWT');
-const { ObjectId } = require('mongodb');
 
 router.use(mongoMiddleware);
 
