@@ -10,13 +10,36 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get('/', async (req, res) =>{
-    const users= req.mongo.usersCollection.find()
+router.get('/', async (req, res) => {
+    const users = req.mongo.usersCollection.find()
     const result = await users.toArray()
     res.send(result)
 })
 
-
+router.patch('/admin/:id', async (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    const filter = { _id: new ObjectId(id) }
+    const updateDoc = {
+        $set: {
+            role: 'admin'
+        },
+    };
+    const result = await req.mongo.usersCollection.updateOne(filter, updateDoc);
+    res.send(result)
+})
+router.patch('/restaurant/:id', async (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    const filter = { _id: new ObjectId(id) }
+    const updateDoc = {
+        $set: {
+            role: 'restaurant'
+        },
+    };
+    const result = await req.mongo.usersCollection.updateOne(filter, updateDoc);
+    res.send(result)
+})
 
 
 
