@@ -11,6 +11,7 @@ const communityRouter = require('./routes/communityRouter');
 const restaurantRouter = require('./routes/restaurantRouter');
 const mongoMiddleware = require('./routes/mongoClient');
 const blogsRouter = require('./routes/blogsRouter');
+const faqRouter = require('./routes/faqRouter')
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with the correct origin
@@ -26,7 +27,7 @@ app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
 app.use('/restaurant', restaurantRouter)
 app.use('/blogs', blogsRouter)
-// app.use('/faq', faqRouter)
+app.use('/faq', faqRouter)
 
 const io = socketIo(server, {
     cors: {
