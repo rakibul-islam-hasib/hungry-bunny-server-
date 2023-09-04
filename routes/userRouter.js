@@ -44,7 +44,6 @@ router.patch('/restaurant/:id', async (req, res) => {
 
 
 
-
 router.get('/:email', verifyJWT, async (req, res) => {
     const email = req.params.email;
     const result = await req.mongo.usersCollection.findOne({ email: email });
