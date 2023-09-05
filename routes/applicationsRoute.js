@@ -14,7 +14,7 @@ router.get('/get', verifyJWT, async (req, res) => {
     const result = await applicationCollection.find({}).toArray();
     res.send(result);
 });
-router.put('/approved/:id', verifyJWT, async (req, res) => {
+router.put('/status/:id', verifyJWT, async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
     const { status } = req.body;
     const filter = { _id: new ObjectId(req.params.id) }
