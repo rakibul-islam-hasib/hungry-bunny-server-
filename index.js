@@ -49,6 +49,8 @@ app.post('/set-token', (req, res) => {
     const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
     res.send({ token });
 });
+
+
 app.get('/', (req, res) => {
     res.send(`
     <h1> Hungry Bunny API </h1>
