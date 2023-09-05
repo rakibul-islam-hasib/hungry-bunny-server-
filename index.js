@@ -11,9 +11,11 @@ const communityRouter = require('./routes/communityRouter');
 const restaurantRouter = require('./routes/restaurantRouter');
 const mongoMiddleware = require('./routes/mongoClient');
 const blogsRouter = require('./routes/blogsRouter');
+const application = require('./routes/applicationsRoute');
+
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with the correct origin
+    origin: '*', // Replace with the correct origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 }));
@@ -26,6 +28,8 @@ app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
 app.use('/restaurant', restaurantRouter)
 app.use('/blogs', blogsRouter)
+// app.use('/faq', faqRouter)
+app.use('/application', application)
 
 const io = socketIo(server, {
     cors: {
@@ -48,6 +52,8 @@ app.post('/set-token', (req, res) => {
     const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
     res.send({ token });
 });
+
+
 app.get('/', (req, res) => {
     res.send(`
     <h1> Hungry Bunny API </h1>
