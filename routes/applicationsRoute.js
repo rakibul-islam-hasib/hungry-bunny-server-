@@ -27,13 +27,20 @@ router.put('/status/:id', verifyJWT, async (req, res) => {
     const userDocx = {
         $set: { role: userRole }
     }
-    // console.log(userId);
-    // now find the user and update the role
     const userResult = await userCollection.updateOne(userFilter, userDocx);
     const result = await applicationCollection.updateOne(filter, docx);
     res.send({ result, userResult });
 });
 
+
+router.get('/get/:id', verifyJWT, async (req, res) => {
+    const applicationCollection = req.mongo.applicationCollection;
+    const filter = { userId: req.params.id }
+    const result = await applicationCollection.findOne(filter);
+    const error = { error: true, result: 'Application not approved yet' }
+    if (result?.status !== 'approved') return res.send(error);
+    else return res.send(result);
+});
 
 
 module.exports = router;
