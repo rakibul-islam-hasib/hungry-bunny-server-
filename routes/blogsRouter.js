@@ -52,8 +52,19 @@ router.put('/:id', async(req, res) =>{
                 description: updateBlog.description,
             }
         }
-        const result = await mongo.blogsCollection.updateOne(filter, blog, options )
+        const result = await req.mongo.blogsCollection.updateOne(filter, blog, options )
         res.send(result)
+    }catch (err) {
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+})
+
+router.delete('/blogs/:id', async(req, res) =>{
+    const id = req.params.id;
+    try{
+    const query = {_id: new ObjectId(id)}
+    const result = await req.mongo.blogsCollection.deleteOne(query)
+    res.send(result)
     }catch (err) {
         res.status(500).send({ error: 'Internal Server Error' });
     }
