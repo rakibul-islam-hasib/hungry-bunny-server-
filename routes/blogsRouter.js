@@ -1,6 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
+const verifyJWT = require('../middleware/verifyJWT')
 
 router.get('/', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -33,7 +34,7 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
-router.put('/:id', async(req, res) =>{
+router.put('/:id', verifyJWT, async(req, res) =>{
     const id = req.params.id;
     try{
         const filter = {_id: new ObjectId(id)}
