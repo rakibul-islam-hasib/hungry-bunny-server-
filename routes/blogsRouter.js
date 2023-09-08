@@ -33,4 +33,30 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
+router.put('/:id', async(req, res) =>{
+    const id = req.params.id;
+    try{
+        const filter = {_id: new ObjectId(id)}
+        const options = { upsert: true }
+        const updateBlog = req.body;
+        const blog = {
+            $set: {
+                blogHeading: updateBlog.blogHeading,
+                authorName: updateBlog.authorName,
+                authorImage: updateBlog.authorImage,
+                blogImage: updateBlog.blogImage,
+                date: updateBlog.date,
+                email: updateBlog.email,
+                time: updateBlog.time,
+                rating: updateBlog.rating,
+                description: updateBlog.description,
+            }
+        }
+        const result = await mongo.blogsCollection.updateOne(filter, blog, options )
+        res.send(result)
+    }catch (err) {
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+})
+
 module.exports = router;
