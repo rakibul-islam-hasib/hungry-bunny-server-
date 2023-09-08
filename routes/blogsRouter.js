@@ -3,6 +3,13 @@ const { ObjectId } = require('mongodb');
 const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT')
 
+router.post('/', async(req, res) =>{
+    const newBlog = req.body;
+    const result = await req.mongo.blogsCollection.insertOne(newBlog)
+    res.send(result)
+} )
+
+
 router.get('/', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;
@@ -12,6 +19,7 @@ router.get('/', async (req, res) => {
     const result = await cursor.toArray();
     res.send(result);
 });
+
 
 router.get('/:id', async (req, res) => {
     const id = req.params.id;
