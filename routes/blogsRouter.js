@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const limit = parseInt(req.query.limit) || 6;
     const skip = (page - 1) * limit;
 
     const cursor = req.mongo.blogsCollection.find().limit(limit).skip(skip);
@@ -22,6 +22,7 @@ router.get('/:id', async (req, res) => {
         res.status(400).send({ error: 'Invalid ID' });
     }
 });
+
 
 router.get('/total/count', async (req, res) => {
     try {

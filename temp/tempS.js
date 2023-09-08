@@ -22,7 +22,7 @@ async function run() {
 
         router.get('/', async (req, res) => {
             const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 5;
+            const limit = parseInt(req.query.limit) || 6;
             const skip = (page - 1) * limit;
 
             const cursor = blogsCollection.find().limit(limit).skip(skip);
