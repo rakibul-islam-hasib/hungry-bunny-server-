@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(mongoMiddleware);   // Connect to MongoDB
 const server = http.createServer(app);
 
+
+
 // Routes
 app.use('/user-info', userRouter);
 app.use('/community-post', communityRouter)
