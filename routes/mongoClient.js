@@ -32,6 +32,7 @@ async function mongoMiddleware(req, res, next) {
   const blogsCollection = database.collection('blogs');
   const faqCollection = database.collection('faq');
   const applicationCollection = database.collection('applications');
+  const foodCollection = database.collection('food');
   req.mongo = {
     client,
     database,
@@ -40,7 +41,8 @@ async function mongoMiddleware(req, res, next) {
     restaurantCollection,
     blogsCollection,
     faqCollection,
-    applicationCollection
+    applicationCollection, 
+    foodCollection
   };
   next();
 }

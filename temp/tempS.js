@@ -22,7 +22,7 @@ async function run() {
 
         router.get('/', async (req, res) => {
             const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 5;
+            const limit = parseInt(req.query.limit) || 6;
             const skip = (page - 1) * limit;
 
             const cursor = blogsCollection.find().limit(limit).skip(skip);
@@ -36,11 +36,23 @@ async function run() {
 
         router.get('/', async (req, res) => {
             const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 3;
+            const limit = parseInt(req.query.limit) || 6;
             const skip = (page - 1) * limit;
 
             const cursor = restaurantCollection.find().limit(limit).skip(skip);
             const total = await restaurantCollection.estimatedDocumentCount();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+         // ----------------- This is playground -----------------
+
+         router.get('/', async (req, res) => {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 20;
+            const skip = (page - 1) * limit;
+
+            const cursor = faqCollection.find().limit(limit).skip(skip);
+            const total = await faqCollection.estimatedDocumentCount();
             const result = await cursor.toArray();
             res.send(result);
         });
