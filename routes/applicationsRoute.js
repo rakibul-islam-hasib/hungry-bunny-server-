@@ -10,16 +10,19 @@ router.post('/apply', verifyJWT, async (req, res) => {
     const result = await applicationCollection.insertOne(data);
     res.send(result);
 });
-router.get('/get', verifyJWT, verifyAdmin, async (req, res) => {
+router.get('/get', verifyJWT,  async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
     const result = await applicationCollection.find({}).toArray();
     res.send(result);
 });
 router.put('/status/:id', verifyJWT, async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
+    
     const userCollection = req.mongo.usersCollection;
     const filter = { _id: new ObjectId(req.params.id) }
-    const userId = await applicationCollection.findOne(filter, { projection: { userId: 1, _id: 0 } });
+    const userId = await applicationCollection.findOne(filter, { projection: { userId: 1, _id: 1 } });
+    console.log(userId)
+
     const { status, userRole } = req.body;
     const userFilter = { _id: new ObjectId(userId.userId) }
     const docx = {
