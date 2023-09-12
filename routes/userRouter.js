@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT');
+const { ObjectId } = require('mongodb');
 
 
 router.post('/', async (req, res) => {
@@ -15,6 +16,42 @@ router.post('/', async (req, res) => {
     const result = await req.mongo.usersCollection.insertOne(data);
     res.send(result);
 });
+
+
+router.get('/', async (req,res)=>{
+    const result= await req.mongo.usersCollection.find().toArray()
+    res.send(result)
+  })
+   
+  
+
+// Update User Roles
+
+router.patch('/admin/:id', async (req,res)=>{
+    const id=req.params.id;
+    const filter={_id: new ObjectId(id)} 
+    const updateDoc = {
+        $set: {
+          role: 'admin'
+        },
+      };
+      const result = await req.mongo.usersCollection.updateOne(filter,updateDoc)
+      res.send(result)
+  })
+
+  router.patch('/restaurant/:id', async (req,res)=>{
+    const id=req.params.id;
+    const filter={_id: new ObjectId(id)} 
+    const updateDoc = {
+        $set: {
+          role: 'restaurant'
+        },
+      };
+      const result = await req.mongo.usersCollection.updateOne(filter,updateDoc)
+      res.send(result)
+  })
+
+
 
 
 router.get('/:email', verifyJWT, async (req, res) => {
