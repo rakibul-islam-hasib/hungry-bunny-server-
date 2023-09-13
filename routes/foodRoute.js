@@ -1,4 +1,5 @@
 const express = require('express');
+const verifyJWT = require('../middleware/verifyJWT');
 const router = express.Router();
 
 
@@ -7,13 +8,19 @@ const router = express.Router();
 
 
 
-router.get('/', async (req, res) =>{
+router.get('/', async (req, res) => {
 
-    const result = await req.mongo.foodCollection.find({status: "approved"}).toArray()
+    const result = await req.mongo.foodCollection.find({ status: "approved" }).toArray()
     res.send(result)
 })
 
+router.get('/:email', async (req, res) => {
 
+    const email = req.query.email;
+    const query = { email: email };
+    const result = await req.mongo.foodCollection.find(query).toArray()
+    res.send(result)
+});
 
 
 router.post('/post/new', async (req, res) => {

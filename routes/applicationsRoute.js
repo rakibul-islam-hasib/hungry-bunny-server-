@@ -10,11 +10,15 @@ router.post('/apply', verifyJWT, async (req, res) => {
     const result = await applicationCollection.insertOne(data);
     res.send(result);
 });
+
+
 router.get('/get', verifyJWT,  async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
-    const result = await applicationCollection.find({}).toArray();
+    const result = await applicationCollection.find().toArray();
     res.send(result);
 });
+
+
 router.put('/status/:id', verifyJWT, async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
     
