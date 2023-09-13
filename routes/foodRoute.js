@@ -1,9 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
 
-});
+
+
+
+
+
+router.get('/', async (req, res) =>{
+
+    const result = await req.mongo.foodCollection.find({status: "approved"}).toArray()
+    res.send(result)
+})
+
+
+
 
 router.post('/post/new', async (req, res) => {
     const data = req.body;
