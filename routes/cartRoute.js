@@ -12,16 +12,9 @@ router.post('/cart/new', async (req, res) => {
 
 
 router.get('/', async (req, res) => {
-    
     const result = await req.mongo.foodCartCollection.find().toArray()
     res.send(result)
 })
-
-
-
-
-
-
 
 
 module.exports = router;
