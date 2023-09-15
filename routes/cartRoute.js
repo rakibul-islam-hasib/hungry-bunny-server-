@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/cart/new', async (req, res) => {
     const data = req.body;
-    const cartCollection = req.mongo.foodCartCollection;
+    const cartCollection = req.mongo.cartCollection;
     const result = await cartCollection.insertOne(data);
     res.send(result);
 });
@@ -13,7 +13,7 @@ router.post('/cart/new', async (req, res) => {
 
 router.get('/', async (req, res) => {
     
-    const result = await req.mongo.foodCartCollection.find().toArray()
+    const result = await req.mongo.cartCollection.find().toArray()
     res.send(result)
 })
 
