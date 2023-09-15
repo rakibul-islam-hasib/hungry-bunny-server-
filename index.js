@@ -35,7 +35,7 @@ app.use('/blogs', blogsRouter)
 app.use('/faq', faqRouter)
 app.use('/application', application)
 app.use('/food', foodRoute)
-app.use('/foodCart', cartRoute)
+app.use('/cart', cartRoute)
 const io = socketIo(server, {
     cors: {
         origin: '*', // allow to server to accept request from different origin

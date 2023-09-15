@@ -41,7 +41,7 @@ router.put('/status/:id', verifyJWT, async (req, res) => {
 });
 
 
-router.get('/get/:id', verifyJWT, async (req, res) => {
+router.get('/get/:id', async (req, res) => {
     const applicationCollection = req.mongo.applicationCollection;
     const filter = { userId: req.params.id }
     const result = await applicationCollection.findOne(filter);
