@@ -1,5 +1,6 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
+const verifyJWT = require('../middleware/verifyJWT');
 const router = express.Router();
 
 
@@ -15,7 +16,44 @@ router.post('/new', async (req, res) => {
     const result = await cartCollection.insertOne(objIdData);
     res.send(result);
 });
-// InCart data : {foodId, userId, quantity} || Now aggregate to get food details and det food details , restaurant details , user details
+
+router.delete('/delete/:cartId', verifyJWT, async (req, res) => {
+    const cartId = req.params.cartId;
+    const cartCollection = req.mongo.cartCollection;
+    const result = await cartCollection.deleteOne({ _id: new ObjectId(cartId) });
+    res.send(result);
+});
+
+// Delete cart item by cartIds array
+router.delete('/delete', verifyJWT, async (req, res) => {
+    const cartIds = req.body.cartIds || [];
+    // console.log(req.body.cartIds)
+    const cartCollection = req.mongo.cartCollection;
+    const result = await cartCollection.deleteMany({ _id: { $in: cartIds.map(id => new ObjectId(id)) } });
+    res.send(result);
+});
+
+router.put('/update/:cartId', verifyJWT, async (req, res) => {
+    const cartId = req.params.cartId;
+    const quantity = req.body.quantity;
+    const cartCollection = req.mongo.cartCollection;
+    const cartItem = await cartCollection.findOne(
+        { _id: new ObjectId(cartId) },
+        { projection: { itemId: 1, userId: 1, restaurant_id: 1, _id: 0 } }
+    );
+    if (quantity === 'plus') {
+        const result = await cartCollection.insertOne(cartItem);
+        res.send(result);
+    }
+    else {
+        const result = await cartCollection.deleteOne({ _id: new ObjectId(cartId) });
+        res.send(result);
+    }
+});
+
+
+
+
 router.get('/in-cart/:userId', async (req, res) => {
     const userId = req.params.userId;
     const cartCollection = req.mongo.cartCollection;
@@ -64,7 +102,7 @@ router.get('/in-cart/:userId', async (req, res) => {
                 foodDetails: { $first: '$foodDetails' },
                 restaurantDetails: { $first: '$restaurantDetails' },
                 userDetails: { $first: '$userDetails' },
-                quantity: { $sum: 1 }, 
+                quantity: { $sum: 1 },
                 cartIds: { $addToSet: '$_id' }
             }
         },
@@ -79,7 +117,7 @@ router.get('/in-cart/:userId', async (req, res) => {
                 'restaurantDetails.restaurant_name': 1,
                 'userDetails.name': 1,
                 'userDetails.email': 1,
-                quantity: 1, 
+                quantity: 1,
                 cartIds: 1
             }
         }
