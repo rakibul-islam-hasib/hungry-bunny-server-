@@ -64,7 +64,8 @@ router.get('/in-cart/:userId', async (req, res) => {
                 foodDetails: { $first: '$foodDetails' },
                 restaurantDetails: { $first: '$restaurantDetails' },
                 userDetails: { $first: '$userDetails' },
-                quantity: { $sum: 1 }
+                quantity: { $sum: 1 }, 
+                cartIds: { $addToSet: '$_id' }
             }
         },
         {
@@ -78,7 +79,8 @@ router.get('/in-cart/:userId', async (req, res) => {
                 'restaurantDetails.restaurant_name': 1,
                 'userDetails.name': 1,
                 'userDetails.email': 1,
-                quantity: 1
+                quantity: 1, 
+                cartIds: 1
             }
         }
     ];
