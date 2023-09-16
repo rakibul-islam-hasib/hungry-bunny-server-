@@ -15,6 +15,7 @@ const faqRouter = require('./routes/faqRouter');
 const application = require('./routes/applicationsRoute');
 const foodRoute = require('./routes/foodRoute');
 const cartRoute = require('./routes/cartRoute');
+const payment = require('./routes/paymentRoute');
 // Middleware
 app.use(cors({
     origin: '*', // Replace with the correct origin
@@ -36,6 +37,7 @@ app.use('/faq', faqRouter)
 app.use('/application', application)
 app.use('/food', foodRoute)
 app.use('/cart', cartRoute)
+app.use('/payment', payment)
 const io = socketIo(server, {
     cors: {
         origin: '*', // allow to server to accept request from different origin
