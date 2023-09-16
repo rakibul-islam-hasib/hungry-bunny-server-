@@ -17,6 +17,25 @@ router.post('/create-payment-intent', verifyJWT, async (req, res) => {
         clientSecret: paymentIntent.client_secret
     });
 })
+// Post payment info to database
+router.post('/post-payment-info', async (req, res) => {
+    const paymentInfo = req.body;
+    console.log(paymentInfo)
+    const paymentCollection = req.mongo.paymentCollection;
+    if (!paymentInfo) {
+        return res.json({ error: 'Missing payment info in request body' });
+    }
+    try {
+        const result = await paymentCollection.insertOne(paymentInfo);
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        res.send({ error: err });
+    }
+
+})
+
+
 
 
 module.exports = router;
