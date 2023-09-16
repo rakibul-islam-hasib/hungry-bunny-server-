@@ -115,6 +115,7 @@ router.get('/in-cart/:userId', async (req, res) => {
                 'foodDetails.price': 1,
                 'foodDetails._id': 1,
                 'restaurantDetails.restaurant_name': 1,
+                'restaurantDetails._id': 1,
                 'userDetails.name': 1,
                 'userDetails.email': 1,
                 quantity: 1,
