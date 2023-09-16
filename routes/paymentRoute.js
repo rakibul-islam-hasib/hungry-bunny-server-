@@ -20,8 +20,16 @@ router.post('/create-payment-intent', verifyJWT, async (req, res) => {
 })
 // Post payment info to database
 router.post('/post-payment-info', async (req, res) => {
-    const paymentInfo = req.body;
     const paymentCollection = req.mongo.paymentCollection;
+    const userCollection = req.mongo.usersCollection;
+    const paymentInfo = req.body;
+    const userId = paymentInfo.userId;
+
+    // Add credit to user
+    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+    const newCredit = user.credit ? user.credit + paymentInfo.totalItem > 2 ? paymentInfo.totalItem : 1 : 1;
+    await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { credit: newCredit } });
+
     if (!paymentInfo) {
         return res.json({ error: 'Missing payment info in request body' });
     }
