@@ -35,6 +35,7 @@ router.post('/post-payment-info', async (req, res) => {
     const paymentInfo = req.body;
     const userId = paymentInfo.userId;
     const orderedItem = paymentInfo.orderedItem;
+    orderedItem.foodId = orderedItem.foodId.map(item => new ObjectId(item));
     paymentInfo.deliveryStatus = 'pending';
 
     // Now update credit to the food item 
