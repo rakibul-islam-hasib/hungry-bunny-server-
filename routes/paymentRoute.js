@@ -35,7 +35,10 @@ router.post('/post-payment-info', async (req, res) => {
     const paymentInfo = req.body;
     const userId = paymentInfo.userId;
     const orderedItem = paymentInfo.orderedItem;
-    orderedItem.foodId = orderedItem.foodId.map(item => new ObjectId(item));
+    // Add object id to the ordered item
+    orderedItem.forEach(item => {
+        item.foodId = new ObjectId(item.foodId);
+    });
     paymentInfo.deliveryStatus = 'pending';
 
     // Now update credit to the food item 
@@ -45,57 +48,45 @@ router.post('/post-payment-info', async (req, res) => {
     }
 
     try {
-        // Create a list of unique restaurant IDs from the ordered items
         const restaurantIds = [...new Set(orderedItem.map(item => item.restaurantId))];
 
         for (const restaurantId of restaurantIds) {
-            // Filter the ordered items for the current restaurant
             const itemsForRestaurant = orderedItem.filter(item => item.restaurantId === restaurantId);
 
-            // Calculate the total quantity for the items in this restaurant's order
             const totalQuantityForRestaurant = itemsForRestaurant.reduce((total, item) => total + item.quantity, 0);
 
-            // Update the relevant food items in the foodCollection
             for (const item of itemsForRestaurant) {
                 const foodId = new ObjectId(item.foodId);
                 const quantity = item.quantity;
-                console.log(item)
-                // Find the food item
                 const foodItem = await foodCollection.findOne({ _id: foodId, restaurant_id: restaurantId });
 
                 if (!foodItem) {
                     return res.json({ error: `Food item with ID ${item.foodId} not found for restaurant ${restaurantId}` });
                 }
 
-                // Check if there is enough quantity to fulfill the order
                 if (foodItem.quantity < quantity) {
                     return res.json({ error: `Insufficient quantity for food item with ID ${item.foodId} at restaurant ${restaurantId}` });
                 }
 
-                // Update the quantity of the food item
                 await foodCollection.updateOne(
                     { _id: foodId, restaurant_id: restaurantId },
                     { $inc: { quantity: -quantity } }
                 );
             }
 
-            // Update the credit for the restaurant
             const restaurant = await applicationCollection.findOne({ _id: new ObjectId(restaurantId) });
 
             if (!restaurant) {
                 return res.json({ error: `Restaurant with ID ${restaurantId} not found` });
             }
 
-            // Calculate the new credit for the restaurant
             const newRestaurantCredit = restaurant.credit ? restaurant.credit + totalQuantityForRestaurant : totalQuantityForRestaurant;
 
-            // Update the restaurant's credit
             await applicationCollection.updateOne(
                 { _id: new ObjectId(restaurantId) },
                 { $set: { credit: newRestaurantCredit } }
             );
 
-            // Add order information to the restaurant
             await applicationCollection.updateOne(
                 { _id: new ObjectId(restaurantId) },
                 { $push: { orders: paymentInfo } }
