@@ -24,24 +24,63 @@ router.post('/post-payment-info', async (req, res) => {
     const userCollection = req.mongo.usersCollection;
     const paymentInfo = req.body;
     const userId = paymentInfo.userId;
+    const orderedItem = paymentInfo.orderedItem;
 
-    // Add credit to user
-    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-    const newCredit = user.credit ? user.credit + paymentInfo.totalItem > 2 ? paymentInfo.totalItem : 1 : 1;
-    await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { credit: newCredit } });
+    // Now update credit to the food item 
+    const foodCollection = req.mongo.foodCollection;
 
     if (!paymentInfo) {
         return res.json({ error: 'Missing payment info in request body' });
     }
+
     try {
+        // Decrease the quantity of food items by the quantity ordered
+        for (const item of orderedItem) {
+            const foodId = new ObjectId(item.foodId);
+            const quantity = item.quantity;
+
+            // Find the food item
+            const foodItem = await foodCollection.findOne({ _id: foodId });
+
+            if (!foodItem) {
+                return res.json({ error: `Food item with ID ${item.foodId} not found` });
+            }
+
+            // Check if there is enough quantity to fulfill the order
+            if (foodItem.quantity < quantity) {
+                return res.json({ error: `Insufficient quantity for food item with ID ${item.foodId}` });
+            }
+
+            // Update the quantity of the food item
+            await foodCollection.updateOne(
+                { _id: foodId },
+                { $inc: { quantity: -quantity } }
+            );
+        }
+
+        // Add credit to user
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            return res.json({ error: 'User not found' });
+        }
+
+        // Calculate the new credit
+        const newCredit = user.credit ? user.credit + paymentInfo.totalItems : paymentInfo.totalItems;
+
+        // Update the user's credit
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { credit: newCredit } }
+        );
+
         const result = await paymentCollection.insertOne(paymentInfo);
-        res.send(result);
+        res.send({ result, credit: newCredit });
     } catch (err) {
         console.log(err);
         res.send({ error: err });
     }
-
 })
+
 
 // Delete cart items from database
 router.delete('/delete-cart-items', async (req, res) => {
