@@ -24,7 +24,7 @@ router.post('/create-payment-intent', verifyJWT, async (req, res) => {
 })
 
 
-
+router.get('/ok', (req, res) => res.send('ok'))
 
 // Post payment info to database
 router.post('/post-payment-info', async (req, res) => {
@@ -58,7 +58,7 @@ router.post('/post-payment-info', async (req, res) => {
             for (const item of itemsForRestaurant) {
                 const foodId = new ObjectId(item.foodId);
                 const quantity = item.quantity;
-
+                console.log(item)
                 // Find the food item
                 const foodItem = await foodCollection.findOne({ _id: foodId, restaurant_id: restaurantId });
 
@@ -122,7 +122,17 @@ router.post('/post-payment-info', async (req, res) => {
     }
 });
 
-
+// All payment 
+router.get('/all-payment', async (req, res) => {
+    const paymentCollection = req.mongo.paymentCollection;
+    try {
+        const result = await paymentCollection.find({}).toArray();
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        res.send({ error: err });
+    }
+});
 
 // Delete cart items from database
 router.delete('/delete-cart-items', async (req, res) => {
