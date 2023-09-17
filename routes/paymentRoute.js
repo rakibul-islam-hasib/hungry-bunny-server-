@@ -30,13 +30,14 @@ router.post('/create-payment-intent', verifyJWT, async (req, res) => {
 router.post('/post-payment-info', async (req, res) => {
     const paymentCollection = req.mongo.paymentCollection;
     const userCollection = req.mongo.usersCollection;
+    const foodCollection = req.mongo.foodCollection;
+    const applicationCollection = req.mongo.applicationCollection;
     const paymentInfo = req.body;
     const userId = paymentInfo.userId;
     const orderedItem = paymentInfo.orderedItem;
     paymentInfo.deliveryStatus = 'pending';
 
     // Now update credit to the food item 
-    const foodCollection = req.mongo.foodCollection;
 
     if (!paymentInfo) {
         return res.json({ error: 'Missing payment info in request body' });
@@ -78,7 +79,6 @@ router.post('/post-payment-info', async (req, res) => {
             }
 
             // Update the credit for the restaurant
-            const applicationCollection = req.mongo.applicationCollection;
             const restaurant = await applicationCollection.findOne({ _id: new ObjectId(restaurantId) });
 
             if (!restaurant) {
@@ -100,8 +100,6 @@ router.post('/post-payment-info', async (req, res) => {
                 { $push: { orders: paymentInfo } }
             );
         }
-
-        // Add credit to user
         const user = await userCollection.findOne({ _id: new ObjectId(userId) });
         if (!user) {
             return res.json({ error: 'User not found' });
