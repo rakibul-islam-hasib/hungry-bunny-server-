@@ -12,13 +12,14 @@ router.post('/post/new', async (req, res) => {
 
 
 
-router.get('/', async (req, res) => {
-    // const email = req.query.email
-    // console.log(email);
-    // const query = { email: email }
-    const result = await req.mongo.foodCollection.find().toArray()
+router.get('/:email', async (req, res) => {
+    const email = req.params.email
+    console.log(email);
+    const query = { email: email }
+    const result = await req.mongo.foodCollection.find(query).toArray()
     res.send(result)
 })
+
 
 
 // router.get('/menu-search/:text', async (req, res) => {
@@ -32,7 +33,6 @@ router.get('/', async (req, res) => {
 //     }).toArray()
 //     res.send(result)
 // })
-
 
 
 

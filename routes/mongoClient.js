@@ -28,7 +28,7 @@ async function mongoMiddleware(req, res, next) {
   const database = client.db('hungry_bunny');
   const communityPostCollection = database.collection('community_post');
   const usersCollection = database.collection('users');
-  const restaurantCollection = database.collection('restaurant');
+  const restaurantCollection = database.collection('applications');
   const blogsCollection = database.collection('blogs');
   const faqCollection = database.collection('faq');
   const applicationCollection = database.collection('applications');
