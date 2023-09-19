@@ -129,7 +129,6 @@ router.get('/all-payment', async (req, res) => {
 });
 
 
-
 // Get the food item by payment collection orderedItem.map(item => item.foodId)
 router.get('/food-item/:paymentId', async (req, res) => {
     const paymentCollection = req.mongo.paymentCollection;
@@ -141,17 +140,22 @@ router.get('/food-item/:paymentId', async (req, res) => {
         const foodItems = await foodCollection.find({ _id: { $in: foodIds } }).toArray();
         const formattedDate = moment.unix(paymentResult.paymentDate).format('MMMM Do YYYY');
 
+        // console.log('orderedItem:', paymentResult.orderedItem);
+        // console.log('foodItems:', foodItems);
 
         const invoiceData = {
             date: formattedDate,
             amountDue: 0,
-            items: foodItems.map(item => ({
-                name: item.food_name,
-                description: 'Not available',
-                rate: item.price,
-                quantity: paymentResult.orderedItem.find(orderedItem => orderedItem.foodId === item._id.toString()).quantity,
-                price: item.price * paymentResult.orderedItem.find(orderedItem => orderedItem.foodId === item._id.toString()).quantity
-            })),
+            items: foodItems.map(item => {
+                const orderedItem = paymentResult.orderedItem.find(orderedItem => orderedItem.foodId.toString() === new ObjectId(item._id).toString()) || {};
+                return {
+                    name: item.food_name,
+                    description: 'Not available',
+                    rate: item.price,
+                    quantity: orderedItem.quantity || 0,
+                    price: item.price * (orderedItem.quantity || 0).toFixed(2),
+                };
+            }),
             totalPaid: paymentResult.paymentAmount,
             name: paymentResult.userName,
             email: paymentResult.userEmail,
@@ -171,7 +175,6 @@ router.get('/food-item/:paymentId', async (req, res) => {
         res.send({ error: err });
     }
 });
-
 
 // Delete cart items from database
 router.delete('/delete-cart-items', async (req, res) => {
