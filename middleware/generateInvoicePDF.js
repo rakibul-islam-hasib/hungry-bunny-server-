@@ -54,7 +54,7 @@ table { font-size: 75%; table-layout: fixed; width: 100%; }
 table { border-collapse: separate; border-spacing: 2px; }
 th, td { border-width: 1px; padding: 0.5em; position: relative; text-align: left; }
 th, td { border-radius: 0.25em; border-style: solid; }
-th { background: #EEE; border-color: #BBB; }
+th { background: #fdba74; border-color: #BBB; }
 td { border-color: #DDD; }
 
 /* page */
@@ -70,7 +70,7 @@ body { background: #FFF; border-radius: 1px; box-shadow: 0 0 1in -0.25in rgba(0,
 header { margin: 0 0 3em; }
 header:after { clear: both; content: ""; display: table; }
 
-header h1 { background: #000; border-radius: 0.25em; color: #FFF; margin: 0 0 1em; padding: 0.5em 0; }
+header h1 { background:#f97316; border-radius: 0.25em; color: #FFF; margin: 0 0 1em; padding: 0.5em 0; }
 header address { float: left; font-size: 75%; font-style: normal; line-height: 1.25; margin: 0 1em 1em 0; }
 header address p { margin: 0 0 0.25em; }
 header span, header img { display: block; float: right; }
@@ -162,17 +162,19 @@ tr:hover .cut { opacity: 1; }
 }
 
 @page { margin: 0; }
+
     </style>
 </head>
 <body>
     <header>
-        <h1>Invoice</h1>
-        <address contenteditable>
-            <p>Jonathan Neal</p>
-            <p>101 E. Chapman Ave<br>Orange, CA 92866</p>
-            <p>(800) 555-1234</p>
+    <h1>Hungry Bunny</h1>
+   
+        <address>
+            <p>Invoice to : </p>
+            <p>${invoiceData.name}</p>
+            <p>${invoiceData.email}</p>
         </address>
-        <span><img alt="" src="http://www.jonathantneal.com/examples/invoice/logo.png"><input type="file" accept="image/*"></span>
+        <span><img alt="" src="https://hungry-bunny-web.web.app/assets/dark-logo-9529fd8e.png"><input type="file" accept="image/*"></span>
     </header>
     <article>
         <h1>Recipient</h1>
@@ -186,11 +188,11 @@ tr:hover .cut { opacity: 1; }
             </tr>
             <tr>
                 <th><span contenteditable>Date</span></th>
-                <td><span contenteditable>January 1, 2012</span></td>
+                <td><span contenteditable>${invoiceData.date}</span></td>
             </tr>
             <tr>
                 <th><span contenteditable>Amount Due</span></th>
-                <td><span id="prefix" contenteditable>$</span><span>600.00</span></td>
+                <td><span id="prefix" contenteditable>$</span><span>${invoiceData.amountDue}</span></td>
             </tr>
         </table>
         <table class="inventory">
@@ -204,20 +206,31 @@ tr:hover .cut { opacity: 1; }
                 </tr>
             </thead>
             <tbody>
-                <tr>
+               <!-- <tr>
                     <td><a class="cut">-</a><span contenteditable>Front End Consultation</span></td>
                     <td><span contenteditable>Experience Review</span></td>
                     <td><span data-prefix>$</span><span contenteditable>150.00</span></td>
                     <td><span contenteditable>4</span></td>
                     <td><span data-prefix>$</span><span>600.00</span></td>
-                </tr>
+                </tr> -->
+                ${invoiceData.items.map(item => `
+                    <tr>
+                        <td><a class="cut">-</a><span contenteditable>${item.name}</span></td>
+                        <td><span contenteditable>${item.description}</span></td>
+                        <td><span data-prefix>$</span><span contenteditable>${item.rate}</span></td>
+                        <td><span contenteditable>${item.quantity}</span></td>
+                        <td><span data-prefix>$</span><span>${item.price}</span></td>
+                    </tr>
+                `).join('')
+        }
+
             </tbody>
         </table>
         <a class="add">+</a>
         <table class="balance">
             <tr>
                 <th><span contenteditable>Total</span></th>
-                <td><span data-prefix>$</span><span>600.00</span></td>
+                <td><span data-prefix>$</span><span>${invoiceData.totalPaid}</span></td>
             </tr>
             <tr>
                 <th><span contenteditable>Amount Paid</span></th>
@@ -238,6 +251,26 @@ tr:hover .cut { opacity: 1; }
 </body>
 </html>
   `;
+
+    /* 
+        const invoiceData = {
+            date: '2021-05-01',
+            amountDue: 600,
+            items: [
+                {
+                    name: 'Front End Consultation',
+                    description: 'Experience Review',
+                    rate: 150,
+                    quantity: 4,
+                    price: 600
+                }
+            ],
+            totalPaid: 0
+        };
+        
+    
+    */
+
 
     await page.setContent(htmlContent);
 

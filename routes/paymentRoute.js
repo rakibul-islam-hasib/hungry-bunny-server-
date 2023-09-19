@@ -1,8 +1,10 @@
 const express = require('express');
 const verifyJWT = require('../middleware/verifyJWT');
 const { ObjectId } = require('mongodb');
+const generateInvoicePDF = require('../middleware/generateInvoicePDF');
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const moment = require('moment');
 
 
 
@@ -125,6 +127,51 @@ router.get('/all-payment', async (req, res) => {
         res.send({ error: err });
     }
 });
+
+
+
+// Get the food item by payment collection orderedItem.map(item => item.foodId)
+router.get('/food-item/:paymentId', async (req, res) => {
+    const paymentCollection = req.mongo.paymentCollection;
+    const foodCollection = req.mongo.foodCollection;
+    const paymentId = req.params.paymentId;
+    try {
+        const paymentResult = await paymentCollection.findOne({ _id: new ObjectId(paymentId) });
+        const foodIds = paymentResult.orderedItem.map(item => new ObjectId(item.foodId));
+        const foodItems = await foodCollection.find({ _id: { $in: foodIds } }).toArray();
+        const formattedDate = moment.unix(paymentResult.paymentDate).format('MMMM Do YYYY');
+
+
+        const invoiceData = {
+            date: formattedDate,
+            amountDue: 0,
+            items: foodItems.map(item => ({
+                name: item.food_name,
+                description: 'Not available',
+                rate: item.price,
+                quantity: paymentResult.orderedItem.find(orderedItem => orderedItem.foodId === item._id.toString()).quantity,
+                price: item.price * paymentResult.orderedItem.find(orderedItem => orderedItem.foodId === item._id.toString()).quantity
+            })),
+            totalPaid: paymentResult.paymentAmount,
+            name: paymentResult.userName,
+            email: paymentResult.userEmail,
+        };
+
+        const pdfBuffer = await generateInvoicePDF(invoiceData);
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename=invoice.pdf');
+
+        // Send the PDF buffer as the response
+        res.send(pdfBuffer);
+
+    } catch (err) {
+        console.log(err);
+        res.send({ error: err });
+    }
+});
+
 
 // Delete cart items from database
 router.delete('/delete-cart-items', async (req, res) => {
