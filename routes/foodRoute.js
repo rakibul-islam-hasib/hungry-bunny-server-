@@ -12,22 +12,40 @@ router.post('/post/new', async (req, res) => {
 
 
 
-router.get('/', async (req, res) => {
-    // const email = req.query.email
-    // console.log(email);
-    // const query = { email: email }
-    const result = await req.mongo.foodCollection.find().toArray()
-
+router.get('/:email', async (req, res) => {
+    const email = req.params.email
+    console.log(email);
+    const query = { email: email }
+    const result = await req.mongo.foodCollection.find(query).toArray()
     res.send(result)
 })
 
 
 
+// router.get('/menu-search/:text', async (req, res) => {
+//     const searchMenu = req.params.text;
+//     const result = await req.mongo.foodCollection.find({
+//         $or: [
+//             { food_name: { $regex: searchMenu, $options: "i" } },
+//             { category: { $regex: searchMenu, $options: "i" } },
+//             { restaurant_name: { $regex: searchMenu, $options: "i" } }
+//         ]
+//     }).toArray()
+//     res.send(result)
+// })
 
 
-router.get('/get/all', async (req, res) => {
-    const foodCollection = req.mongo.foodCollection;
-    const result = await foodCollection.find({ status: 'approved' }).toArray();
+
+
+router.get('/allMenu/:text', async (req, res) => {
+    console.log(req.params.text);
+    if (req.params.text == 'Pizza' || req.params.text == 'Biryani' || req.params.text == 'Burger' || req.params.text == 'Snacks' || req.params.text == 'Sushi') {
+
+        const foodCollection = req.mongo.foodCollection;
+        const result = await foodCollection.find( { category: req.params.text }).toArray();
+        return res.send(result);
+    }
+    const result = await req.mongo.foodCollection.find({ status: 'approved' }).toArray();
     res.send(result);
 });
 
