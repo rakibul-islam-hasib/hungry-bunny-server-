@@ -22,17 +22,17 @@ router.get('/:email', async (req, res) => {
 
 
 
-// router.get('/menu-search/:text', async (req, res) => {
-//     const searchMenu = req.params.text;
-//     const result = await req.mongo.foodCollection.find({
-//         $or: [
-//             { food_name: { $regex: searchMenu, $options: "i" } },
-//             { category: { $regex: searchMenu, $options: "i" } },
-//             { restaurant_name: { $regex: searchMenu, $options: "i" } }
-//         ]
-//     }).toArray()
-//     res.send(result)
-// })
+router.get('/menu-Search/:text', async (req, res) => {
+    const searchMenu = req.params.text;
+    const result = await req.mongo.foodCollection.find({
+        $or: [
+            { food_name: { $regex: searchMenu, $options: "i" } },
+            { category: { $regex: searchMenu, $options: "i" } },
+            { restaurant_name: { $regex: searchMenu, $options: "i" } }
+        ]
+    }).toArray()
+    res.send(result)
+})
 
 
 
