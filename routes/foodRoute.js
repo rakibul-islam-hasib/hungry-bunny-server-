@@ -36,13 +36,12 @@ router.get('/menu-Search/:text', async (req, res) => {
 
 
 
-
 router.get('/allMenu/:text', async (req, res) => {
     console.log(req.params.text);
     if (req.params.text == 'Pizza' || req.params.text == 'Biryani' || req.params.text == 'Burger' || req.params.text == 'Snacks' || req.params.text == 'Sushi') {
 
         const foodCollection = req.mongo.foodCollection;
-        const result = await foodCollection.find( { category: req.params.text }).toArray();
+        const result = await foodCollection.find({ status: 'approved' , category: req.params.text }).toArray();
         return res.send(result);
     }
     const result = await req.mongo.foodCollection.find({ status: 'approved' }).toArray();
