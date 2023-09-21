@@ -3,6 +3,15 @@ const { ObjectId } = require('mongodb');
 const router = express.Router();
 
 
+
+router.get('/all', async (req, res)=>{
+    const result = await req.mongo.restaurantCollection.find().toArray()
+    res.send(result)
+})
+
+
+
+
 router.get('/', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;

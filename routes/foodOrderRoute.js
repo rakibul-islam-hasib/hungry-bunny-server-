@@ -64,11 +64,26 @@ router.get('/order/:restaurantId', async (req, res) => {
         console.log(err);
         res.send({ error: err });
     }
-
-
-
-
 })
+
+// Update the status of the order (orders.deliveryStatus)
+router.patch('/order/:restaurantId/:paymentId', async (req, res) => {
+    const restaurantId = req.params.restaurantId;
+    const paymentId = req.params.paymentId;
+    const applicationCollection = req.mongo.applicationCollection;
+    const deliveryStatus = 'delivered' //req.body.deliveryStatus;
+    try {
+        const result = await applicationCollection.updateOne(
+            { _id: new ObjectId(restaurantId), 'orders.paymentId': paymentId },
+            { $set: { 'orders.$.deliveryStatus': deliveryStatus } }
+        );
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        res.send({ error: err });
+    }
+})
+
 
 
 module.exports = router;
