@@ -176,6 +176,22 @@ router.get('/food-item/:paymentId', async (req, res) => {
     }
 });
 
+
+
+// Get user payment info
+router.get('/user-payment/:userId',  async (req, res) => {
+    const paymentCollection = req.mongo.paymentCollection;
+    const userId = req.params.userId;
+    try {
+        const result = await paymentCollection.find({ userId: userId }).toArray();
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        res.send({ error: err });
+    }
+});
+
+
 // Delete cart items from database
 router.delete('/delete-cart-items', async (req, res) => {
     const { cartItems } = req.body;
