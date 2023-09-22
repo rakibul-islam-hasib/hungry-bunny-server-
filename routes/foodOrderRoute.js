@@ -15,9 +15,7 @@ router.get('/payment', async (req, res) => {
 
 //! Main Work here 
 router.get('/order/:restaurantId', async (req, res) => {
-    const paymentCollection = req.mongo.paymentCollection;
     const restaurantId = req.params.restaurantId;
-    const foodCollection = req.mongo.foodCollection;
     const applicationCollection = req.mongo.applicationCollection;
     try {
 
