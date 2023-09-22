@@ -18,38 +18,38 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get('/', async (req,res)=>{
-    const result= await req.mongo.usersCollection.find().toArray()
+router.get('/', async (req, res) => {
+    const result = await req.mongo.usersCollection.find().toArray()
     res.send(result)
-  })
-   
-  
+})
+
+
 
 // Update User Roles
 
-router.patch('/admin/:id', async (req,res)=>{
-    const id=req.params.id;
-    const filter={_id: new ObjectId(id)} 
+router.patch('/admin/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) }
     const updateDoc = {
         $set: {
-          role: 'admin'
+            role: 'admin'
         },
-      };
-      const result = await req.mongo.usersCollection.updateOne(filter,updateDoc)
-      res.send(result)
-  })
+    };
+    const result = await req.mongo.usersCollection.updateOne(filter, updateDoc)
+    res.send(result)
+})
 
-  router.patch('/restaurant/:id', async (req,res)=>{
-    const id=req.params.id;
-    const filter={_id: new ObjectId(id)} 
+router.patch('/restaurant/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) }
     const updateDoc = {
         $set: {
-          role: 'restaurant'
+            role: 'restaurant'
         },
-      };
-      const result = await req.mongo.usersCollection.updateOne(filter,updateDoc)
-      res.send(result)
-  })
+    };
+    const result = await req.mongo.usersCollection.updateOne(filter, updateDoc)
+    res.send(result)
+})
 
 
 
@@ -76,6 +76,24 @@ router.put('/photo/:email', verifyJWT, async (req, res) => {
     const result = await req.mongo.usersCollection.updateOne(filter, updatedDocx, options);
     res.send(result);
 });
+
+
+router.put('/address/:email', async (req, res) => {
+    const email = req.params.email;
+    const address = req.body.address;
+    // console.log(address);
+    const options = { upsert: true };
+    const regex = new RegExp(email, 'i'); // i for case insensitive
+    const filter = { email: regex };
+    const updatedDocx = {
+        $set: {
+            location: address
+        },
+    }
+    const result = await req.mongo.usersCollection.updateOne(filter, updatedDocx, options);
+    res.send(result);
+})
+
 
 
 router.get('/post/:email', verifyJWT, async (req, res) => {
