@@ -35,7 +35,6 @@ router.get('/menu-Search/:text', async (req, res) => {
 
 
 
-
 router.get('/allMenu/:text', async (req, res) => {
     console.log(req.params.text);
     if (req.params.text == 'Pizza' || req.params.text == 'Biryani' || req.params.text == 'Burger' || req.params.text == 'Snacks' || req.params.text == 'Sushi') {
