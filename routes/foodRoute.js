@@ -1,7 +1,7 @@
 const express = require('express');
 const verifyJWT = require('../middleware/verifyJWT');
 const router = express.Router();
-
+const { ObjectId } = require('mongodb');
 router.post('/post/new', async (req, res) => {
     const data = req.body;
     const foodCollection = req.mongo.foodCollection;
@@ -14,7 +14,6 @@ router.post('/post/new', async (req, res) => {
 
 router.get('/:email', async (req, res) => {
     const email = req.params.email
-    console.log(email);
     const query = { email: email }
     const result = await req.mongo.foodCollection.find(query).toArray()
     res.send(result)
@@ -81,6 +80,17 @@ router.get('/get/pending/r', async (req, res) => {
 
     res.send(result);
 });
+
+
+// Update the status of the food item
+router.put('/update/:id', async (req, res) => {
+    const foodCollection = req.mongo.foodCollection;
+    const filter = { _id: new ObjectId(req.params.id) };
+    const update = { $set: { status: req.body.status } };
+    const result = await foodCollection.updateOne(filter, update);
+    res.send(result);
+});
+
 
 // Get all approved food
 router.get('/get/approved', verifyJWT, async (req, res) => {

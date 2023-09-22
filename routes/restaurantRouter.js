@@ -52,7 +52,6 @@ router.get('/search', async(req, res) =>{
 router.get('/search/query', async (req, res) => {
     // const name = req..name;
     const name = req.query.name;
-    console.log(name)
     const query = { restaurantName: { $regex: name, $options: 'i' } }
     const cursor = req.mongo.restaurantCollection.find(query)
     const result = await cursor.toArray()
