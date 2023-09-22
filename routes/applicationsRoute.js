@@ -89,7 +89,7 @@ router.get('/:id', async (req, res) => {
         const result = await req.mongo.applicationCollection.findOne(query);
         res.send(result)
     } catch (err) {
-        res.status(400).send({ error: 'Invalid ID' });
+        res.status(400).send({ error: err });
     }
 });
 
@@ -102,11 +102,26 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
+// Get 6 approved application 
+router.get('/get/approved/6', async (req, res) => {
+    const applicationCollection = req.mongo.applicationCollection;
+    const result = await applicationCollection.find({ status: 'approved' }).limit(6).toArray();
+    res.send(result);
+});
+
+// Get approved route  that include  a valid image url check via regex and the limit is 6
+// router.get('/get/approved/6', async (req, res) => {
+//     const applicationCollection = req.mongo.applicationCollection;
+//     const result = await applicationCollection.find({ status: 'approved', image: { $regex: /https?:\/\/.*\.(?:png|jpg)/i } }).limit(6).toArray();
+//     res.send(result);
+// });
+
+
 // get specific data
-router.get('/restaurant-food', async(req, res) =>{
+router.get('/restaurant-food', async (req, res) => {
     let query = {};
-    if(req.query?.restaurant_name){
-        query = { restaurant_name : req.mongo.query.restaurant_name}
+    if (req.query?.restaurant_name) {
+        query = { restaurant_name: req.mongo.query.restaurant_name }
     }
     const result = await req.mongo.foodCollection.find(query).toArray();
     res.send(result)
