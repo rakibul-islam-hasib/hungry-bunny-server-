@@ -17,7 +17,7 @@ const foodRoute = require('./routes/foodRoute');
 const cartRoute = require('./routes/cartRoute');
 const payment = require('./routes/paymentRoute');
 const foodOrderRoute = require('./routes/foodOrderRoute');
-
+const statsRoute = require('./routes/statsRoute');
 // Middleware
 app.use(cors({
     origin: '*', // Replace with the correct origin
@@ -41,6 +41,7 @@ app.use('/food', foodRoute)
 app.use('/cart', cartRoute)
 app.use('/payment', payment)
 app.use('/food-order', foodOrderRoute)
+app.use('/stats', statsRoute)
 
 
 // Socket.io
