@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT');
 const { ObjectId } = require('mongodb');
-const verifyAdmin = require('../middleware/verifyAdmin');
 const mail = require('../middleware/sendMail');
 
 router.post('/apply', verifyJWT, async (req, res) => {
