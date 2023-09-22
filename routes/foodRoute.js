@@ -42,7 +42,7 @@ router.get('/allMenu/:text', async (req, res) => {
     if (req.params.text == 'Pizza' || req.params.text == 'Biryani' || req.params.text == 'Burger' || req.params.text == 'Snacks' || req.params.text == 'Sushi') {
 
         const foodCollection = req.mongo.foodCollection;
-        const result = await foodCollection.find( { category: req.params.text }).toArray();
+        const result = await foodCollection.find({ category: req.params.text }).toArray();
         return res.send(result);
     }
     const result = await req.mongo.foodCollection.find({ status: 'approved' }).toArray();
@@ -93,7 +93,7 @@ router.get('/get/approved', verifyJWT, async (req, res) => {
 router.get('/get/:id', async (req, res) => {
     const foodCollection = req.mongo.foodCollection;
     const filter = { restaurant_id: req.params.id }
-    const result = await foodCollection.findOne(filter);
+    const result = await foodCollection.find(filter).toArray();
     res.send(result);
 });
 
