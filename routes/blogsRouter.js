@@ -32,4 +32,13 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
+router.post('/blogs', async(req, res) => {
+    const newBlog = req.body;
+    console.log(newBlog);
+    const result = await req.mongo.blogsCollection.insertOne(newBlog)
+    res.send(result)
+})
+
+
+
 module.exports = router;
