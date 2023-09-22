@@ -31,10 +31,51 @@ router.get('/get/all', async (req, res) => {
     res.send(result);
 });
 
+// Get pending food
+router.get('/get/pending', async (req, res) => {
+    const foodCollection = req.mongo.foodCollection;
+    const result = await foodCollection.find({ status: 'pending' }).toArray();
+    res.send(result);
+});
+
+// Convert the pending menu item restaurant_id to Object Id and aggrigate to food collection and get the pending menu with restaurant de
+
+router.get('/get/pending/r', async (req, res) => {
+    const foodCollection = req.mongo.foodCollection;
+    const result = await foodCollection.aggregate([
+        {
+            $match: { status: 'pending' }
+        },
+        {
+            $addFields: {
+                restaurant_id: { $toObjectId: '$restaurant_id' } // Convert restaurant_id to ObjectId
+            }
+        },
+        {
+            $lookup: {
+                from: 'applications',
+                localField: 'restaurant_id',
+                foreignField: '_id',
+                as: 'restaurant'
+            }
+        }
+    ]).toArray();
+
+    res.send(result);
+});
+
 // Get all approved food
 router.get('/get/approved', verifyJWT, async (req, res) => {
     const foodCollection = req.mongo.foodCollection;
     const result = await foodCollection.find({ approved: true }).toArray();
+    res.send(result);
+});
+
+// Get a food  item via restaurant_id 
+router.get('/get/:id', async (req, res) => {
+    const foodCollection = req.mongo.foodCollection;
+    const filter = { restaurant_id: req.params.id }
+    const result = await foodCollection.findOne(filter);
     res.send(result);
 });
 
