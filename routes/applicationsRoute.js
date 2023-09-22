@@ -103,6 +103,16 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
+// get specific data
+router.get('/restaurant-food', async(req, res) =>{
+    let query = {};
+    if(req.query?.restaurant_name){
+        query = { restaurant_name : req.mongo.query.restaurant_name}
+    }
+    const result = await req.mongo.foodCollection.find(query).toArray();
+    res.send(result)
+})
+
 
 
 module.exports = router;
