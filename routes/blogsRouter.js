@@ -32,4 +32,41 @@ router.get('/total/count', async (req, res) => {
     }
 });
 
+router.post('/blogs', async(req, res) => {
+    const newBlog = req.body;
+    // console.log(newBlog);
+    const result = await req.mongo.blogsCollection.insertOne(newBlog)
+    res.send(result)
+})
+
+router.put('/blogs/:id', async(req, res) =>{
+    const id = req.params.id;
+    const filter = {_id: new ObjectId(id)}
+    const options = {upsert: true}
+    const updateBlog = req.body;
+    const Blog = {
+        $set: {
+            blogHeading: updateBlog.blogHeading,
+            authorName: updateBlog.authorName,
+            authorImage: updateBlog.authorImage,
+            blogImage: updateBlog.blogImage,
+            date: updateBlog.date,
+            email: updateBlog.email,
+            time: updateBlog.time,
+            rating: updateBlog.rating,
+            description: updateBlog.description,
+        }
+    }
+    const result = await req.mongo.blogHeading.updateOne( filter, Blog, options)
+    res.send(result)
+})
+
+
+router.delete('/blogs/:id', async(req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id)}
+    const result = await req.mongo.blogsCollection.deleteOne(query)
+    res.send(result)
+})
+
 module.exports = router;
