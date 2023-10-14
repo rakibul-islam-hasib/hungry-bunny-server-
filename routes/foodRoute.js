@@ -35,7 +35,6 @@ router.get('/menu-Search/:text', async (req, res) => {
 
 
 
-
 router.get('/allMenu/:text', async (req, res) => {
     console.log(req.params.text);
     if (req.params.text == 'Pizza' || req.params.text == 'Biryani' || req.params.text == 'Burger' || req.params.text == 'Snacks' || req.params.text == 'Sushi') {
@@ -102,8 +101,9 @@ router.get('/get/approved', verifyJWT, async (req, res) => {
 // Get a food  item via restaurant_id 
 router.get('/get/:id', async (req, res) => {
     const foodCollection = req.mongo.foodCollection;
-    const filter = { restaurant_id: req.params.id }
+    const filter = { restaurant_id: req.params.id, status: 'approved' }
     const result = await foodCollection.find(filter).toArray();
+    // console.log(result);
     res.send(result);
 });
 
